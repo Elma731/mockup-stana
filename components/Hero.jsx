@@ -96,7 +96,7 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.65 }}
           className="flex items-center gap-1 mb-10 p-1 border border-[#E8E5DF] bg-white/60 w-fit"
         >
-          {Object.entries(PORTFOLIOS).map(([key, val]) => (
+          {Object.entries(PORTFOLIOS).map(([key]) => (
             <button
               key={key}
               onClick={() => setActiveCity(key)}
@@ -164,8 +164,10 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      {/* ─── RIGHT — Dual image frame grid ────────────────────────────────── */}
-      <div className="relative z-10 w-full lg:flex-1 grid grid-rows-[60%_40%] lg:grid-rows-[65%_35%] overflow-hidden">
+      {/* ─── RIGHT — Dual image frame grid (desktop only) ─────────────────── */}
+      {/* Hidden below lg so percentage grid-rows don't collapse on tablet.
+          The mobile/tablet image strip below handles those viewports instead. */}
+      <div className="relative z-10 hidden lg:grid lg:flex-1 grid-rows-[65%_35%] overflow-hidden">
 
         {/* Primary image — large top frame */}
         <div className="relative overflow-hidden">
@@ -183,7 +185,8 @@ export default function Hero() {
             />
           </AnimatePresence>
 
-          {/* Image caption */}
+          {/* Bottom-left caption only — city badge removed to prevent
+              visual clash with the transparent navbar CTA at top-right */}
           <AnimatePresence mode="wait">
             <motion.p
               key={`${activeCity}-cap-primary`}
@@ -191,17 +194,11 @@ export default function Hero() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="absolute bottom-4 left-4 text-[9px] tracking-[0.28em] uppercase text-white/60"
+              className="absolute bottom-4 left-4 text-[9px] tracking-[0.28em] uppercase text-white/55"
             >
               {portfolio.captionPrimary}
             </motion.p>
           </AnimatePresence>
-
-          {/* City badge — top-right overlay */}
-          <div className="absolute top-5 right-5 flex items-center gap-1.5 bg-[#0B2564]/80 backdrop-blur-sm px-3 py-1.5">
-            <MapPin size={9} strokeWidth={2} className="text-white/70" />
-            <span className="text-[9px] tracking-[0.25em] uppercase text-white/80">{portfolio.city}</span>
-          </div>
         </div>
 
         {/* Secondary image — smaller bottom frame */}
@@ -227,19 +224,19 @@ export default function Hero() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5, delay: 0.5 }}
-              className="absolute bottom-4 left-4 text-[9px] tracking-[0.28em] uppercase text-white/55"
+              className="absolute bottom-4 left-4 text-[9px] tracking-[0.28em] uppercase text-white/45"
             >
               {portfolio.captionSecondary}
             </motion.p>
           </AnimatePresence>
 
-          {/* Subtle navy overlay accent on bottom frame */}
+          {/* Subtle navy gradient on bottom frame */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0B2564]/30 to-transparent pointer-events-none" />
         </div>
       </div>
 
-      {/* Mobile image strip (shows below text on small screens) */}
-      <div className="lg:hidden h-72 w-full overflow-hidden">
+      {/* Mobile / tablet image strip (below lg) */}
+      <div className="lg:hidden w-full overflow-hidden" style={{ height: 'clamp(280px, 45vw, 420px)' }}>
         <AnimatePresence mode="wait">
           <motion.img
             key={`${activeCity}-mobile`}

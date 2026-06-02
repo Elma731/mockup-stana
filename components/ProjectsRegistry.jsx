@@ -60,12 +60,18 @@ const PROJECTS = [
   },
 ];
 
-// Overlay variant — slides up on hover
-const overlayVariants = {
-  rest:  { y: '100%', opacity: 0 },
-  hover: { y: '0%',  opacity: 1, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
-};
-
+/*
+ * ProjectCard hover strategy — pure CSS group-hover
+ *
+ * Root cause of the previous bug: mixing object-based scroll animation
+ * (initial/whileInView) with variant-based hover (whileHover="hover") on the
+ * same motion.div caused Framer Motion to never apply the overlay's "rest"
+ * variant on first render, so the overlay appeared visible immediately.
+ *
+ * Fix: Framer Motion handles scroll entrance only (on the outer wrapper).
+ * All hover effects — image zoom, label fade-out, overlay slide-up — are
+ * driven by Tailwind group-hover CSS, which has no render-timing ambiguity.
+ */
 function ProjectCard({ project, index }) {
   return (
     <motion.div
@@ -73,31 +79,26 @@ function ProjectCard({ project, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.65, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
-      whileHover="hover"
-      className={`relative overflow-hidden group ${
-        project.large
-          ? 'row-span-2'    // tall cards occupy two grid rows
-          : 'row-span-1'
+      className={`relative overflow-hidden group cursor-pointer ${
+        project.large ? 'row-span-2' : 'row-span-1'
       }`}
       style={{ aspectRatio: project.large ? '3/4' : '4/3' }}
     >
-      {/* Project image */}
-      <motion.img
+      {/* Project image — slow Ken Burns zoom on hover */}
+      <img
         src={project.img}
         alt={`${project.code} — ${project.name}`}
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover
+                   transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]
+                   group-hover:scale-105"
         draggable={false}
-        variants={{
-          rest:  { scale: 1 },
-          hover: { scale: 1.04, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
-        }}
       />
 
-      {/* Persistent dark vignette at bottom for legibility */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent pointer-events-none" />
+      {/* Persistent bottom vignette */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
 
-      {/* Always-visible bottom label */}
-      <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
+      {/* Default bottom label — fades out when overlay appears */}
+      <div className="absolute bottom-0 left-0 right-0 p-5 z-10 transition-opacity duration-300 group-hover:opacity-0">
         <p className="text-[9px] tracking-[0.3em] uppercase text-white/50 mb-1">
           {project.category} · {project.year}
         </p>
@@ -106,11 +107,10 @@ function ProjectCard({ project, index }) {
         </p>
       </div>
 
-      {/* ── Hover overlay — slides up to reveal full metadata ── */}
-      <motion.div
-        variants={overlayVariants}
-        className="absolute inset-0 bg-[#0B2564]/92 z-20 p-6 lg:p-8 flex flex-col justify-end"
-      >
+      {/* Hover overlay — hidden by default (opacity-0 + translate-y-4), revealed on hover.
+          Single-line className is required so Tailwind JIT can statically extract every token. */}
+      <div className="absolute inset-0 z-20 bg-[#0B2564]/92 p-6 lg:p-8 flex flex-col justify-end opacity-0 translate-y-4 pointer-events-none transition-all duration-300 ease-out group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto">
+
         {/* Category pill */}
         <span className="inline-block w-fit px-3 py-1 border border-white/20 text-[9px] tracking-[0.28em] uppercase text-white/60 mb-4">
           {project.category}
@@ -141,18 +141,11 @@ function ProjectCard({ project, index }) {
         </div>
 
         {/* CTA link */}
-        <a
-          href="#consult"
-          className="flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-white/80 hover:text-white transition-colors group/link"
-        >
+        <a href="#consult" className="flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-white/80 hover:text-white transition-colors group/link">
           Enquire About This Space
-          <ArrowUpRight
-            size={12}
-            strokeWidth={1.75}
-            className="transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
-          />
+          <ArrowUpRight size={12} strokeWidth={1.75} className="transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
         </a>
-      </motion.div>
+      </div>
     </motion.div>
   );
 }
