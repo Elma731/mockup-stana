@@ -29,7 +29,7 @@ const PROJECTS = [
     large: true,
   },
   {
-    code: 'Project BS',
+    code: 'Intentional Luxury Kitchens',
     name: 'Bespoke Intentional Kitchen',
     location: 'Ikoyi, Lagos',
     scope: 'Kitchen Renovation · Custom Joinery',
