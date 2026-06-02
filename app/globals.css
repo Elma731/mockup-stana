@@ -1,0 +1,105 @@
+/*
+ * Stana Interior — Global Stylesheet
+ * Brand palette: gallery whites + royal navy blue (#0B2564)
+ * Typography: Cormorant Garamond (headings) + DM Sans (body/UI)
+ */
+
+/* Google Fonts — preloaded in layout.jsx for performance */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Canvas colours */
+    --bg-primary:   #F8F7F4;   /* warm gallery white — main page bg   */
+    --bg-surface:   #F2F0EC;   /* alternate section surfaces          */
+    --bg-elevated:  #EDEBE6;   /* card fills                          */
+    --bg-dark:      #0B2564;   /* navy — dark accent sections         */
+    --bg-dark-deep: #071844;   /* deeper navy for footers             */
+
+    /* Text hierarchy */
+    --text-primary:   #1C1C1C; /* architectural charcoal              */
+    --text-secondary: #4A4A4A; /* mid-grey                            */
+    --text-muted:     #8A8A8A; /* light muted                         */
+    --text-inverse:   #F8F7F4; /* on dark sections                    */
+    --text-navy:      #0B2564; /* navy — used for accented labels     */
+
+    /* Brand navy palette */
+    --navy-800: #0B2564;
+    --navy-600: #143591;
+    --navy-400: #2552C0;
+    --navy-200: #6A92E0;
+
+    /* Borders */
+    --border-light: #E8E5DF;
+    --border-mid:   #D8D4CC;
+    --border-navy:  rgba(11, 37, 100, 0.15);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* Refined scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: #0B2564; }
+
+  /* Brand selection */
+  ::selection {
+    background-color: rgba(11, 37, 100, 0.1);
+    color: #1C1C1C;
+  }
+}
+
+@layer utilities {
+  /* Glassmorphism — for navbar on light bg */
+  .glass-light {
+    background: rgba(248, 247, 244, 0.88);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(11, 37, 100, 0.07);
+  }
+
+  /* Glassmorphism — for navbar on dark bg (scrolled over dark sections) */
+  .glass-dark {
+    background: rgba(7, 24, 68, 0.92);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+
+  /* Structural dividing line — very subtle */
+  .divider-navy { border-color: rgba(11, 37, 100, 0.1); }
+  .divider-white { border-color: rgba(248, 247, 244, 0.12); }
+
+  /* Section label — small-caps overline style */
+  .label-overline {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  /* Editorial heading baseline */
+  .heading-editorial {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 500;
+    line-height: 1.05;
+  }
+}
